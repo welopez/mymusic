@@ -8,6 +8,11 @@ package ar.edu.unnoba.pdyc.mymusic.model;
  *
  * @author Lenovo
  */
-public class Genre {
-    
+public enum Genre {
+    ROCK,
+    TECHNO,
+    POP,
+    JAZZ,
+    FOLK,
+    CLASSICAL
 }
