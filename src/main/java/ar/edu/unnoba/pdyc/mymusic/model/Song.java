@@ -10,36 +10,36 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 
 /**
  *
  * @author Lenovo
  */
 @Entity
-@Table(name="songs")
+@Table(name = "songs")
 public class Song implements Serializable {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Basic
     private String name;
-    
+
     @Basic
     private String author;
-    
+
     @Enumerated(EnumType.STRING)
     private Genre genre;
-  
-    
+
     // Getters and Setters;
     public Long getId() {
         return id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -63,5 +63,5 @@ public class Song implements Serializable {
     public void setGenre(Genre genre) {
         this.genre = genre;
     }
-    
+
 }

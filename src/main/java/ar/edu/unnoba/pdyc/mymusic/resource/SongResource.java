@@ -10,6 +10,7 @@ import ar.edu.unnoba.pdyc.mymusic.service.SongService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,26 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Path("/songs")
 public class SongResource {
+
     @Autowired
     private SongService songService;
-    
+
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSongs() {
         List<Song> songs = songService.getSongs();
         return Response.ok(songs).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSongs(@QueryParam("author") String author, @QueryParam("genre") String genre) {
+
+        if (author != null && genre != null) {
+            List<Song> songs = songService.getSongs(author, genre);
+            return Response.ok(songs).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

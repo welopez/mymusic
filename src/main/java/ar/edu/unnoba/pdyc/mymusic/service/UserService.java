@@ -4,14 +4,16 @@
  */
 package ar.edu.unnoba.pdyc.mymusic.service;
 
-import ar.edu.unnoba.pdyc.mymusic.model.Song;
-import java.util.List;
+import ar.edu.unnoba.pdyc.mymusic.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  *
  * @author Lenovo
  */
-public interface SongService {
-    List<Song> getSongs();
-    List<Song> getSongs(String author, String genre);
+public interface UserService extends UserDetailsService {
+
+    User findByEmail(String email);
+
+    void create(User user) throws Exception;
 }

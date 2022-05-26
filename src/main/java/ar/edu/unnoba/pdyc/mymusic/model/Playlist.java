@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -22,19 +23,20 @@ import javax.persistence.Table;
  * @author Lenovo
  */
 @Entity
-@Table(name="playlists")
+@Table(name = "playlists")
 public class Playlist implements Serializable {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Basic
     private String name;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "playlists_songs",
@@ -43,7 +45,6 @@ public class Playlist implements Serializable {
     )
     private List<Song> songs;
 
-    
     // Getters and Setters
     public Long getId() {
         return id;
@@ -72,5 +73,5 @@ public class Playlist implements Serializable {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
-    
+
 }

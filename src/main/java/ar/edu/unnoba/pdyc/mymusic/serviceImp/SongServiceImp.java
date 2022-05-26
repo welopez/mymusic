@@ -4,6 +4,7 @@
  */
 package ar.edu.unnoba.pdyc.mymusic.serviceImp;
 
+import ar.edu.unnoba.pdyc.mymusic.model.Genre;
 import ar.edu.unnoba.pdyc.mymusic.model.Song;
 import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.SongService;
@@ -25,8 +26,13 @@ public class SongServiceImp implements SongService {
         return songRepository.findAll();
     }
     
+    @Override
+    public List<Song> getSongs(String author, String genre) {
+        return songRepository.findByAuthorAndGenre(author, Genre.valueOf(genre));
+    }
+    
     public Song saveSong(Song song) {
         return songRepository.save(song);
     }
-    
+
 }
