@@ -27,7 +27,6 @@ public class UserResource {
     private MyModelMapper modelMapper = new MyModelMapper();
 
     @POST
-    @Path("/create")
     //@Consumes(MediaType.APPLICATION_JSON)
     public Response singUpUser(AuthenticationRequestDTO authenticationRequestDTO) {
         User user = modelMapper.map(authenticationRequestDTO, User.class);

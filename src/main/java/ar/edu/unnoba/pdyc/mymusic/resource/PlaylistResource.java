@@ -5,20 +5,25 @@
 package ar.edu.unnoba.pdyc.mymusic.resource;
 
 import ar.edu.unnoba.pdyc.mymusic.MyModelMapper;
-import ar.edu.unnoba.pdyc.mymusic.dto.PlaylistDTO;
+import ar.edu.unnoba.pdyc.mymusic.dto.CreatePlaylistRequestDTO;
+import ar.edu.unnoba.pdyc.mymusic.dto.PlaylistResponseDTO;
 import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
 import ar.edu.unnoba.pdyc.mymusic.service.PlaylistService;
+import java.lang.reflect.Type;
 import java.util.List;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -30,25 +35,29 @@ public class PlaylistResource {
     @Autowired
     private PlaylistService playlistService;
 
-    private MyModelMapper modelMapper = new MyModelMapper();
+    private final MyModelMapper modelMapper = new MyModelMapper();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPlaylists() {
 
         List<Playlist> playlists = playlistService.getPlaylists();
-        return Response.ok(playlists).build();
+        Type listType = new TypeToken<List<PlaylistResponseDTO>>() {
+        }.getType();
+        List<PlaylistResponseDTO> listDTO = modelMapper.map(playlists, listType);
+        return Response.ok(listDTO).build();
     }
 
     @POST
-    public Response createPlaylist(PlaylistDTO playlistDTO) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createPlaylist(CreatePlaylistRequestDTO playlistDTO) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = (String) auth.getPrincipal();
 
         Playlist playlist = modelMapper.map(playlistDTO, Playlist.class);
-        try {
-            playlistService.createPlaylist(playlist);
-        } catch (Exception e) {
-            return Response.status(Status.FORBIDDEN).build();
-        }
+
+        playlistService.createPlaylist(playlist, userEmail);
         return Response.ok().build();
     }
 
@@ -56,8 +65,31 @@ public class PlaylistResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPlaylistById(@PathParam("id") Long id) {
-        //Agregar Try
-        Playlist playlist = playlistService.getPlaylist(id);
-        return Response.ok(playlist).build();
+
+        try {
+            Playlist playlist = playlistService.getPlaylist(id);
+            Type type = new TypeToken<PlaylistResponseDTO>() {
+            }.getType();
+            PlaylistResponseDTO playlistDTO = modelMapper.map(playlist, type);
+            return Response.ok(playlistDTO).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updatePlaylist(@PathParam("id") Long id, CreatePlaylistRequestDTO playlistDTO) {
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = (String) auth.getPrincipal();
+            Playlist playlist = modelMapper.map(playlistDTO, Playlist.class);
+            playlistService.updatePlaylist(id, playlist, userEmail);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 }

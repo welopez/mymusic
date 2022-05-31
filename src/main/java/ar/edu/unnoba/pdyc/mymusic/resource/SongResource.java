@@ -26,21 +26,10 @@ public class SongResource {
     private SongService songService;
 
     @GET
-    @Path("/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getSongs() {
-        List<Song> songs = songService.getSongs();
-        return Response.ok(songs).build();
-    }
-
-    @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSongs(@QueryParam("author") String author, @QueryParam("genre") String genre) {
 
-        if (author != null && genre != null) {
-            List<Song> songs = songService.getSongs(author, genre);
-            return Response.ok(songs).build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        List<Song> songs = songService.getSongs(author, genre);
+        return Response.ok(songs).build();
     }
 }

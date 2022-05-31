@@ -18,4 +18,8 @@ import org.springframework.stereotype.Repository;
 public interface SongRepository extends JpaRepository<Song, Long> {
 
     List<Song> findByAuthorAndGenre(String author, Genre genre);
+
+    public List<Song> findByAuthor(String author);
+
+    public List<Song> findByGenre(Genre valueOf);
 }

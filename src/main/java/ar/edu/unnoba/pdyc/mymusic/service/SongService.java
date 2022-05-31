@@ -12,6 +12,5 @@ import java.util.List;
  * @author Lenovo
  */
 public interface SongService {
-    List<Song> getSongs();
     List<Song> getSongs(String author, String genre);
 }

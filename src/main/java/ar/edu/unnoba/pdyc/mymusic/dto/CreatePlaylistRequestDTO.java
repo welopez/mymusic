@@ -4,10 +4,24 @@
  */
 package ar.edu.unnoba.pdyc.mymusic.dto;
 
+import ar.edu.unnoba.pdyc.mymusic.model.User;
+
 /**
  *
  * @author Lenovo
  */
-public class PlaylistDTO {
+public class CreatePlaylistRequestDTO {
+
+    private String name;
+
+    //Getters and Setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     
 }

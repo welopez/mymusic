@@ -36,21 +36,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers("/songs/list").permitAll()
-                .antMatchers("/songs").permitAll()
-                .antMatchers("/users/create").permitAll()
-                .antMatchers(HttpMethod.GET, "/playlists").permitAll()
-                .antMatchers(HttpMethod.GET, "/playlists/**").permitAll()
-                .antMatchers("/**").fullyAuthenticated()
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/songs").permitAll()           
+                //.antMatchers("/**").fullyAuthenticated()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(this.userService).passwordEncoder(this.passwordEncoder);
     }
 
     @Bean

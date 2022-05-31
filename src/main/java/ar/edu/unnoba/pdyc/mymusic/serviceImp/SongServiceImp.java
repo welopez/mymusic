@@ -18,21 +18,21 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SongServiceImp implements SongService {
+
     @Autowired
     SongRepository songRepository;
 
     @Override
-    public List<Song> getSongs() {
-        return songRepository.findAll();
-    }
-    
-    @Override
     public List<Song> getSongs(String author, String genre) {
-        return songRepository.findByAuthorAndGenre(author, Genre.valueOf(genre));
-    }
-    
-    public Song saveSong(Song song) {
-        return songRepository.save(song);
+        if (author != null && genre != null){
+            return songRepository.findByAuthorAndGenre(author, Genre.valueOf(genre));
+        }else if (author != null){
+            return songRepository.findByAuthor(author);
+        }else if (genre != null){
+            return songRepository.findByGenre(Genre.valueOf(genre));
+        }else{
+            return songRepository.findAll();
+        }
     }
 
 }

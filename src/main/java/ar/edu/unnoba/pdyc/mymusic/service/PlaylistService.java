@@ -12,12 +12,19 @@ import java.util.List;
  * @author Lenovo
  */
 public interface PlaylistService {
+
     public List<Playlist> getPlaylists();
-    public Playlist createPlaylist(Playlist playlist);
-    public Playlist getPlaylist(Long id);
-    public Playlist setPlaylistName(String name, Long id);
-    public Playlist addSong(Long songId, Long playlistId);
-    public Playlist removeSong(Long songId, Long playlistId);
-    public void deletePlaylist(Long id);
-    
+
+    public void createPlaylist(Playlist playlist, String userEmail);
+
+    public Playlist getPlaylist(Long id) throws Exception;
+
+    public void updatePlaylist(Long id, Playlist playlist, String userEmail) throws Exception;
+
+    public void addSong(Long songId, Long playlistId, String userEmail) throws Exception;
+
+    public void removeSong(Long songId, Long playlistId, String userEmail) throws Exception;
+
+    public void deletePlaylist(Long id, String userEmail) throws Exception;
+
 }
