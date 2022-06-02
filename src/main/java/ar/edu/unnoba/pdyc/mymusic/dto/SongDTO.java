@@ -4,18 +4,20 @@
  */
 package ar.edu.unnoba.pdyc.mymusic.dto;
 
-import java.util.List;
+import ar.edu.unnoba.pdyc.mymusic.model.Genre;
 
 /**
  *
  * @author Lenovo
  */
-public class PlaylistResponseDTO {
+public class SongDTO {
 
     private Long id;
     private String name;
-    private String userEmail;
-    private List<SongDTO> songs;
+    private String author;
+    private Genre genre;
+    
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -33,21 +35,20 @@ public class PlaylistResponseDTO {
         this.name = name;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public List<SongDTO> getSongs() {
-        return songs;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setSongs(List<SongDTO> songs) {
-        this.songs = songs;
+    public void setGenre(Genre genre) {
+        this.genre = genre;
     }
-    
     
 }

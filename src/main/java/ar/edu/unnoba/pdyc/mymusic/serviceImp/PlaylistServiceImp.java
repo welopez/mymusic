@@ -5,11 +5,15 @@
 package ar.edu.unnoba.pdyc.mymusic.serviceImp;
 
 import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
+import ar.edu.unnoba.pdyc.mymusic.model.Song;
 import ar.edu.unnoba.pdyc.mymusic.model.User;
 import ar.edu.unnoba.pdyc.mymusic.repository.PlaylistRepository;
+import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.repository.UserRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.PlaylistService;
 import java.util.List;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,9 @@ public class PlaylistServiceImp implements PlaylistService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    SongRepository songRepository;
 
     @Override
     public List<Playlist> getPlaylists() {
@@ -48,27 +55,69 @@ public class PlaylistServiceImp implements PlaylistService {
 
         User user = userRepository.findByEmail(userEmail);
         Playlist playlistDB = playlistRepository.findById(id).get();
-        if (playlistDB.getUser().equals(user)) {
-            playlistDB.setName(playlist.getName());
-            playlistRepository.save(playlistDB);
+        if (playlistDB != null) {
+            if (playlistDB.getUser().equals(user)) {
+                playlistDB.setName(playlist.getName());
+                playlistRepository.save(playlistDB);
+            } else {
+                throw new ForbiddenException();
+            }
         } else {
-            throw new Exception();
+            throw new NotFoundException();
         }
     }
 
     @Override
     public void addSong(Long songId, Long playlistId, String userEmail) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        User user = userRepository.findByEmail(userEmail);
+        Playlist playlistDB = playlistRepository.findById(playlistId).get();
+        Song songDB = songRepository.findById(songId).get();
+        if (playlistDB != null || songDB != null) {
+            // Si el usuario es el dueño del playlist y la playlist no contiene a la cancion, esta se agrega a la playlist.
+            if (playlistDB.getUser().equals(user) && !playlistDB.getSongs().contains(songDB)) {
+                playlistDB.getSongs().add(songDB);
+                playlistRepository.save(playlistDB);
+            } else {
+                throw new ForbiddenException();
+            }
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
     public void removeSong(Long songId, Long playlistId, String userEmail) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        User user = userRepository.findByEmail(userEmail);
+        Playlist playlistDB = playlistRepository.findById(playlistId).get();
+        Song songDB = songRepository.findById(songId).get();
+        if (playlistDB != null || songDB != null) {
+            if (playlistDB.getUser().equals(user)) {
+                playlistDB.getSongs().remove(songDB);
+                playlistRepository.save(playlistDB);
+            } else {
+                throw new ForbiddenException();
+            }
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
     public void deletePlaylist(Long id, String userEmail) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        User user = userRepository.findByEmail(userEmail);
+        Playlist playlistDB = playlistRepository.findById(id).get();
+        if (playlistDB != null) {
+            if (playlistDB.getUser().equals(user)) {
+                playlistRepository.delete(playlistDB);
+            } else {
+                throw new ForbiddenException();
+            }
+        } else {
+            throw new NotFoundException();
+        }
     }
 
 }

@@ -7,12 +7,16 @@ package ar.edu.unnoba.pdyc.mymusic.resource;
 import ar.edu.unnoba.pdyc.mymusic.MyModelMapper;
 import ar.edu.unnoba.pdyc.mymusic.dto.CreatePlaylistRequestDTO;
 import ar.edu.unnoba.pdyc.mymusic.dto.PlaylistResponseDTO;
+import ar.edu.unnoba.pdyc.mymusic.dto.SongDTO;
 import ar.edu.unnoba.pdyc.mymusic.model.Playlist;
 import ar.edu.unnoba.pdyc.mymusic.service.PlaylistService;
 import java.lang.reflect.Type;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -88,6 +92,59 @@ public class PlaylistResource {
             Playlist playlist = modelMapper.map(playlistDTO, Playlist.class);
             playlistService.updatePlaylist(id, playlist, userEmail);
             return Response.ok().build();
+        } catch (ForbiddenException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @POST
+    @Path("/{id}/songs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addSong(@PathParam("id") Long playlistId, SongDTO song) {
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = (String) auth.getPrincipal();
+            playlistService.addSong(song.getId(), playlistId, userEmail);
+            return Response.ok().build();
+        } catch (ForbiddenException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    
+    @DELETE
+    @Path("/{id}/songs/{song_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response removeSong(@PathParam("id") Long playlistId, @PathParam("song_id") Long songId) {
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = (String) auth.getPrincipal();
+            playlistService.removeSong(songId, playlistId, userEmail);
+            return Response.ok().build();
+        } catch (ForbiddenException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    
+    @DELETE
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deletePlaylist(@PathParam("id") Long playlistId) {
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = (String) auth.getPrincipal();
+            playlistService.deletePlaylist(playlistId, userEmail);
+            return Response.ok().build();
+        } catch (ForbiddenException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
