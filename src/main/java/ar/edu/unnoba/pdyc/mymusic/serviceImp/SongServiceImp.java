@@ -9,6 +9,7 @@ import ar.edu.unnoba.pdyc.mymusic.model.Song;
 import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.SongService;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +25,35 @@ public class SongServiceImp implements SongService {
 
     @Override
     public List<Song> getSongs(String author, String genre) {
-        if (author != null && genre != null){
+        if (author != null && genre != null) {
             return songRepository.findByAuthorAndGenre(author, Genre.valueOf(genre));
-        }else if (author != null){
+        } else if (author != null) {
             return songRepository.findByAuthor(author);
-        }else if (genre != null){
+        } else if (genre != null) {
             return songRepository.findByGenre(Genre.valueOf(genre));
-        }else{
+        } else {
             return songRepository.findAll();
+        }
+    }
+
+    @Override
+    public CompletableFuture<List<Song>> getSongsAsync(String author, String genre) {
+        if (author != null && genre != null) {
+            return CompletableFuture.completedFuture(
+                    songRepository.findByAuthorAndGenre(author, Genre.valueOf(genre))
+            );
+        } else if (author != null) {
+            return CompletableFuture.completedFuture(
+                    songRepository.findByAuthor(author)
+            );
+        } else if (genre != null) {
+            return CompletableFuture.completedFuture(
+                    songRepository.findByGenre(Genre.valueOf(genre))
+            );
+        } else {
+            return CompletableFuture.completedFuture(
+                    songRepository.findAll()
+            );
         }
     }
 

@@ -12,6 +12,7 @@ import ar.edu.unnoba.pdyc.mymusic.repository.SongRepository;
 import ar.edu.unnoba.pdyc.mymusic.repository.UserRepository;
 import ar.edu.unnoba.pdyc.mymusic.service.PlaylistService;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,11 @@ public class PlaylistServiceImp implements PlaylistService {
     @Override
     public List<Playlist> getPlaylists() {
         return playlistRepository.findAll();
+    }
+    
+    @Override
+    public CompletableFuture<List<Playlist>> getPlaylistsAsync() {
+        return CompletableFuture.completedFuture(playlistRepository.findAll());
     }
 
     @Override
@@ -73,7 +79,7 @@ public class PlaylistServiceImp implements PlaylistService {
         User user = userRepository.findByEmail(userEmail);
         Playlist playlistDB = playlistRepository.findById(playlistId).get();
         Song songDB = songRepository.findById(songId).get();
-        if (playlistDB != null || songDB != null) {
+        if (playlistDB != null && songDB != null) {
             // Si el usuario es el dueño del playlist y la playlist no contiene a la cancion, esta se agrega a la playlist.
             if (playlistDB.getUser().equals(user) && !playlistDB.getSongs().contains(songDB)) {
                 playlistDB.getSongs().add(songDB);
@@ -92,8 +98,9 @@ public class PlaylistServiceImp implements PlaylistService {
         User user = userRepository.findByEmail(userEmail);
         Playlist playlistDB = playlistRepository.findById(playlistId).get();
         Song songDB = songRepository.findById(songId).get();
-        if (playlistDB != null || songDB != null) {
-            if (playlistDB.getUser().equals(user)) {
+        if (playlistDB != null && songDB != null) {
+            // Si el usuario es el dueño del playlist y la playlist contiene a la cancion, la elimino.
+            if (playlistDB.getUser().equals(user) && playlistDB.getSongs().contains(songDB)) {
                 playlistDB.getSongs().remove(songDB);
                 playlistRepository.save(playlistDB);
             } else {

@@ -6,6 +6,7 @@ package ar.edu.unnoba.pdyc.mymusic.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,6 +45,31 @@ public class Playlist implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
     private List<Song> songs;
+
+    
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Playlist other = (Playlist) obj;
+        return Objects.equals(this.id, other.id);
+    }    
+    
 
     // Getters and Setters
     public Long getId() {

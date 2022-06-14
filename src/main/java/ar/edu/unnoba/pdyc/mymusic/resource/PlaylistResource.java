@@ -22,6 +22,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.modelmapper.TypeToken;
@@ -41,15 +43,26 @@ public class PlaylistResource {
 
     private final MyModelMapper modelMapper = new MyModelMapper();
 
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getPlaylists() {
+//
+//        List<Playlist> playlists = playlistService.getPlaylists();
+//        Type listType = new TypeToken<List<PlaylistResponseDTO>>() {
+//        }.getType();
+//        List<PlaylistResponseDTO> listDTO = modelMapper.map(playlists, listType);
+//        return Response.ok(listDTO).build();
+//    }
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPlaylists() {
+    public void getPlaylistsAsync(@Suspended AsyncResponse response) {
 
-        List<Playlist> playlists = playlistService.getPlaylists();
-        Type listType = new TypeToken<List<PlaylistResponseDTO>>() {
-        }.getType();
-        List<PlaylistResponseDTO> listDTO = modelMapper.map(playlists, listType);
-        return Response.ok(listDTO).build();
+        playlistService.getPlaylistsAsync().thenAccept((playlists) -> {
+            Type listType = new TypeToken<List<PlaylistResponseDTO>>() {}.getType();
+            List<PlaylistResponseDTO> listDTO = modelMapper.map(playlists, listType);
+            response.resume(Response.ok(listDTO).build());
+        });
     }
 
     @POST

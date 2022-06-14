@@ -14,6 +14,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.modelmapper.TypeToken;
@@ -31,14 +33,26 @@ public class SongResource {
 
     private final MyModelMapper modelMapper = new MyModelMapper();
 
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getSongs(@QueryParam("author") String author, @QueryParam("genre") String genre) {
+//
+//        List<Song> songs = songService.getSongs(author, genre);
+//        Type listType = new TypeToken<List<SongDTO>>() {
+//        }.getType();
+//        List<SongDTO> listDTO = modelMapper.map(songs, listType);
+//        return Response.ok(listDTO).build();
+//    }
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSongs(@QueryParam("author") String author, @QueryParam("genre") String genre) {
+    public void getSongsAsync(@Suspended AsyncResponse response, @QueryParam("author") String author, @QueryParam("genre") String genre) {
 
-        List<Song> songs = songService.getSongs(author, genre);
-        Type listType = new TypeToken<List<SongDTO>>() {
-        }.getType();
-        List<SongDTO> listDTO = modelMapper.map(songs, listType);
-        return Response.ok(listDTO).build();
+        songService.getSongsAsync(author, genre).thenAccept((songs) -> {
+            Type listType = new TypeToken<List<SongDTO>>() {
+            }.getType();
+            List<SongDTO> listDTO = modelMapper.map(songs, listType);
+            response.resume(Response.ok(listDTO).build());
+        });
     }
 }

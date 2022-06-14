@@ -5,6 +5,7 @@
 package ar.edu.unnoba.pdyc.mymusic.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,6 +36,29 @@ public class Song implements Serializable {
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Song other = (Song) obj;
+        return Objects.equals(this.id, other.id);
+    }
+    
     // Getters and Setters;
     public Long getId() {
         return id;
