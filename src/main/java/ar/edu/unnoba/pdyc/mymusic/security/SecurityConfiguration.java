@@ -56,12 +56,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         final CorsConfiguration configuration = new CorsConfiguration();
         
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Para permitir a los origenes especificados enviar solicitudes al servidor
         
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // Metodos permitidos que se pueden enviar al servidor
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("*")); // Para enviar los headers en el response
-        configuration.setAllowedHeaders(Arrays.asList("*")); // Para recibir los headers en la request
+        configuration.setExposedHeaders(Arrays.asList("*")); // Para que los navegadores puedan acceder a los headers especificados en el response
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Para enviar los headers especificados en la request hacia el servidor
         //configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         
