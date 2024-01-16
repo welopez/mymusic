@@ -14,5 +14,8 @@ public enum Genre {
     POP,
     JAZZ,
     FOLK,
-    CLASSICAL
+    CLASSICAL,
+    REGUETON,
+    CUMBIA,
+    TRAP
 }

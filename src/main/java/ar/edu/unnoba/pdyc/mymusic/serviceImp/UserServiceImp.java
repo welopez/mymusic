@@ -33,7 +33,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public void create(User user) throws Exception {
         User userExist = userRepository.findByEmail(user.getEmail());
         if(userExist != null){
-            throw new Exception();
+            throw new Exception("El usuario ya existe.");
         }
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(user);

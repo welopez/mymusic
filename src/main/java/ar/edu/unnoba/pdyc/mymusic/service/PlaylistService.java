@@ -18,7 +18,7 @@ public interface PlaylistService {
     
     public CompletableFuture<List<Playlist>> getPlaylistsAsync();
 
-    public void createPlaylist(Playlist playlist, String userEmail);
+    public Playlist createPlaylist(Playlist playlist, String userEmail);
 
     public Playlist getPlaylist(Long id) throws Exception;
 

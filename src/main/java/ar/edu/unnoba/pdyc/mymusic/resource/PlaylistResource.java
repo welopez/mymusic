@@ -48,8 +48,7 @@ public class PlaylistResource {
 //    public Response getPlaylists() {
 //
 //        List<Playlist> playlists = playlistService.getPlaylists();
-//        Type listType = new TypeToken<List<PlaylistResponseDTO>>() {
-//        }.getType();
+//        Type listType = new TypeToken<List<PlaylistResponseDTO>>() {}.getType();
 //        List<PlaylistResponseDTO> listDTO = modelMapper.map(playlists, listType);
 //        return Response.ok(listDTO).build();
 //    }
@@ -67,6 +66,7 @@ public class PlaylistResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createPlaylist(CreatePlaylistRequestDTO playlistDTO) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -74,8 +74,12 @@ public class PlaylistResource {
 
         Playlist playlist = modelMapper.map(playlistDTO, Playlist.class);
 
-        playlistService.createPlaylist(playlist, userEmail);
-        return Response.ok().build();
+        Playlist savedPlaylist = playlistService.createPlaylist(playlist, userEmail);
+        
+        Type type = new TypeToken<PlaylistResponseDTO>() {}.getType();
+        PlaylistResponseDTO savedPlaylistDTO = modelMapper.map(savedPlaylist, type);
+        
+        return Response.ok(savedPlaylistDTO).build();
     }
 
     @GET
@@ -123,7 +127,9 @@ public class PlaylistResource {
             playlistService.addSong(song.getId(), playlistId, userEmail);
             return Response.ok().build();
         } catch (ForbiddenException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return Response.status(Response.Status.FORBIDDEN)
+                .entity(e.getMessage())
+                .build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

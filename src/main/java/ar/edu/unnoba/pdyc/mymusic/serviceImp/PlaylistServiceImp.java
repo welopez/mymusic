@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,7 +42,8 @@ public class PlaylistServiceImp implements PlaylistService {
     
     @Override
     public CompletableFuture<List<Playlist>> getPlaylistsAsync() {
-        return CompletableFuture.completedFuture(playlistRepository.findAll());
+        Sort sort = Sort.by(Sort.Order.asc("name")); // Orden ascendente por el campo 'name'
+        return CompletableFuture.completedFuture(playlistRepository.findAll(sort));
     }
 
     @Override
@@ -50,10 +52,10 @@ public class PlaylistServiceImp implements PlaylistService {
     }
 
     @Override
-    public void createPlaylist(Playlist playlist, String userEmail) {
+    public Playlist createPlaylist(Playlist playlist, String userEmail) {
         User user = userRepository.findByEmail(userEmail);
         playlist.setUser(user);
-        playlistRepository.save(playlist);
+        return playlistRepository.save(playlist);
     }
 
     @Override
@@ -81,11 +83,13 @@ public class PlaylistServiceImp implements PlaylistService {
         Song songDB = songRepository.findById(songId).get();
         if (playlistDB != null && songDB != null) {
             // Si el usuario es el dueño del playlist y la playlist no contiene a la cancion, esta se agrega a la playlist.
-            if (playlistDB.getUser().equals(user) && !playlistDB.getSongs().contains(songDB)) {
+            if (!playlistDB.getUser().equals(user)) {
+                throw new ForbiddenException("Acceso denegado.");
+            }else if(playlistDB.getSongs().contains(songDB)){
+                throw new ForbiddenException("La cancion ya se encuentra en la playlist.");            
+            } else {
                 playlistDB.getSongs().add(songDB);
                 playlistRepository.save(playlistDB);
-            } else {
-                throw new ForbiddenException();
             }
         } else {
             throw new NotFoundException();

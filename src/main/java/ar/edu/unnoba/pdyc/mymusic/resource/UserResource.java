@@ -33,7 +33,7 @@ public class UserResource {
         try {
             userService.create(user);
         } catch (Exception e) {
-            return Response.status(Status.FORBIDDEN).build();
+            return Response.status(Status.FORBIDDEN).entity(e.getMessage()).build();
         }
         return Response.ok().build();
     }
